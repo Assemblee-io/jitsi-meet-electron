@@ -1,4 +1,5 @@
 {
+
   "name": "assemblee",
   "productName": "Assemblee",
   "version": "1.0.1",
@@ -45,22 +46,22 @@
       "differentialPackage": true
     },
     "mac": {
-      "artifactName": "jitsi-meet.${ext}",
+      "artifactName": "Assemblee.${ext}",
       "category": "public.app-category.video",
       "darkModeSupport": true,
       "hardenedRuntime": true,
       "entitlements": "entitlements.mac.plist",
       "entitlementsInherit": "entitlements.mac.plist",
       "extendInfo": {
-        "NSCameraUsageDescription": "Jitsi Meet requires access to your camera in order to make video-calls.",
-        "NSMicrophoneUsageDescription": "Jitsi Meet requires access to your microphone in order to make calls (audio/video)."
+        "NSCameraUsageDescription": "Assemblee requires access to your camera in order to make video-calls.",
+        "NSMicrophoneUsageDescription": "Assemblee requires access to your microphone in order to make calls (audio/video)."
       }
     },
     "linux": {
       "artifactName": "jitsi-meet-${arch}.${ext}",
       "category": "VideoConference;AudioVideo;Audio;Video;Network",
-      "description": "Jitsi Meet Desktop App",
-      "executableName": "jitsi-meet",
+      "description": "Assemblee Desktop App",
+      "executableName": "Assemblee",
       "target": [
         {
           "arch": "x64",
@@ -69,7 +70,7 @@
       ]
     },
     "win": {
-      "artifactName": "jitsi-meet.${ext}",
+      "artifactName": "Assemblee.${ext}",
       "target": [
         {
           "arch": [
@@ -85,7 +86,7 @@
         "name": "jitsi-protocol",
         "role": "Viewer",
         "schemes": [
-          "jitsi-meet"
+          "assemblee"
         ]
       }
     ]
@@ -145,6 +146,7 @@
     "redux-logger": "3.0.6",
     "redux-persist": "5.10.0",
     "redux-persist-electron-storage": "2.0.0",
+    "shell": "^0.5.0",
     "source-map-support": "0.5.16",
     "styled-components": "3.4.0"
   },
