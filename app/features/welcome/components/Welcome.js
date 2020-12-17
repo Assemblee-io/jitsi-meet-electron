@@ -30,6 +30,10 @@ const Dummy = styled.div`
   background: #fea;
 `;
 
+import axios from 'axios';
+
+
+
 
 type Props = {
 
@@ -125,6 +129,7 @@ class Welcome extends Component<Props, State> {
             list: [],
             focusInput: [true,false,false,false,false,false,false,false],
             clicked: false,
+            error: false
         };
 
         // Bind event handlers.
@@ -239,17 +244,22 @@ class Welcome extends Component<Props, State> {
      * @returns {void}
      */
     _onJoin() {
-        console.log(this.state.list)
         const inputURL = this.state.list.join('') || this.state.generatedRoomname;
-        console.log(inputURL)
-        const conference = createConferenceObjectFromURL(inputURL);
+        axios.get(`https://apiv2.assemblee.io/api/v1/room/join/` + inputURL)
+            .then(res => {
+                console.log(res)
+                const conference = createConferenceObjectFromURL(inputURL);
 
-        // Don't navigate if conference couldn't be created
-        if (!conference) {
-            return;
-        }
+                // Don't navigate if conference couldn't be created
+                if (!conference) {
+                    return;
+                }
 
-        this.props.dispatch(push('/conference', conference));
+                this.props.dispatch(push('/conference', conference));
+            }).catch(err => {
+                this.setState({error: true})
+                return;
+        })
     }
 
     _onLogin: (*) => void;
@@ -266,9 +276,11 @@ class Welcome extends Component<Props, State> {
 
 
 
-    handleChange(event) {
+    async handleChange(event) {
         const t = event.target.value
         const i = parseInt(event.target.name)
+        console.log(t)
+        console.log(i)
         if (event.target.value === '') {
             if (i > 0)
                 this.myRef[i - 1].current.focus()
@@ -280,19 +292,19 @@ class Welcome extends Component<Props, State> {
                 };
             });
         } else {
-            console.log(i)
+            if (i !== 7) {
+                this.myRef[i + 1].current.focus()
+            }
+            await this.setState(state => {
+                const list = state.list.concat(t);
+
+                return {
+                    list,
+                    value: '',
+                };
+            });
             if (i === 7) {
                 this._onJoin()
-            } else {
-                this.myRef[i + 1].current.focus()
-                this.setState(state => {
-                    const list = state.list.concat(t);
-
-                    return {
-                        list,
-                        value: '',
-                    };
-                });
             }
         }
     }
@@ -345,22 +357,29 @@ class Welcome extends Component<Props, State> {
                             <Page>
                                 <Grid>
                                     { this.state.clicked &&
-                                    <div id="form">
-                                        <div className="form__group form__pincode">
-                                            <label className="dark-inverted">
-                                                Vous avez un code de réunion ? Entrez-le ici.
-                                            </label>
-                                            {
-                                                this.state.focusInput.map((value, index) => {
-                                                    return <input type="text" ref={this.myRef[index]}
-                                                                  value={this.state.list[index]}
-                                                                  onChange={this.handleChange} name={index}
-                                                                  maxLength="1" pattern="[a-zA-Z]*" tabIndex="1"
-                                                                  placeholder="·" autoComplete="off" key={index}/>
-                                                })
+                                        <div>
+                                            <div id="form">
+                                                <div className="form__group form__pincode">
+                                                    <label className="dark-inverted">
+                                                        Vous avez un code de réunion ? Entrez-le ici.
+                                                    </label>
+                                                    {
+                                                        this.state.focusInput.map((value, index) => {
+                                                            return <input type="text" ref={this.myRef[index]}
+                                                                          value={this.state.list[index]}
+                                                                          onChange={this.handleChange} name={index}
+                                                                          maxLength="1" pattern="[a-zA-Z]*" tabIndex="1"
+                                                                          placeholder="·" autoComplete="off" key={index}/>
+                                                        })
+                                                    }
+                                                </div>
+                                            </div>
+                                            {this.state.error &&
+                                                <div className={'centerDiv'}>
+                                                    <p className={'errorP'}> No room found </p>
+                                                </div>
                                             }
                                         </div>
-                                    </div>
                                     }
                                     <div className={'centerDiv'}>
                                         <a className={'button-join-app blue'} onClick = { async () => {
